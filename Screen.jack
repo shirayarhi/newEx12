@@ -196,6 +196,7 @@ class Screen {
         } else {
           let screen[reg1] = (screen[reg1] & ~(ind1));
         }
+        return;
       }
         if(curColor){
         let screen[reg1] = (screen[reg1] | ind1);
