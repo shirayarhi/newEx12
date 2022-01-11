@@ -16,6 +16,7 @@ class Sys {
         do Keyboard.init();
         do Output.init();
         do Main.main();
+        do Sys.halt();
         return;
     }
 
@@ -30,10 +31,15 @@ class Sys {
 
     /** Waits approximately duration milliseconds and returns.  */
     function void wait(int duration) {
-        var int delay_factor;
-        let delay_factor = 0;
-        while (delay_factor < (duration * 1000000)) {
-            let delay_factor = delay_factor + 1;
+        var int delay_factor1, delay_factor2;
+        let delay_factor1 = 0;
+        while (delay_factor1 < (duration * 10000 )) {
+            let delay_factor2 = 0;
+            while (delay_factor2 < ( 10 )){
+                let delay_factor2 = delay_factor2 + 1;
+            }
+
+            let delay_factor1 = delay_factor1 + 1;
         }
         return;
     }
@@ -43,6 +49,7 @@ class Sys {
     function void error(int errorCode) {
         do Output.printString("ERR");
         do Output.printInt(errorCode);
+        do Sys.halt();
         return;
     }
 }

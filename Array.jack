@@ -13,8 +13,6 @@
  */
 class Array {
 
-    static Array arr;
-
     /** Constructs a new Array of the given size. */
     function Array new(int size) {
         return Memory.alloc(size);
@@ -22,7 +20,7 @@ class Array {
 
     /** Disposes this array. */
     method void dispose() {
-        do Memory.deAlloc(arr);
+        do Memory.deAlloc(this);
         return;
     }
 }

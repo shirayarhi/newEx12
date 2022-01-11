@@ -50,11 +50,12 @@ class Keyboard {
      */
     function char readChar() {
       var char cur;
+      do Output.printChar(0); //?
       let cur = Keyboard.keyPressed();
       while(Keyboard.keyPressed() = 0){}
       let cur = Keyboard.keyPressed();
-      let cur = Keyboard.keyPressed();
       while (~(Keyboard.keyPressed() = 0)){}
+      do Output.backSpace();
       do Output.printChar(cur);
       return cur; 
     }
@@ -79,7 +80,6 @@ class Keyboard {
         }
         if(c = String.backSpace()){
           do str.eraseLastChar();
-          do Output.backSpace();
         } 
         else {
           do str.appendChar(c);

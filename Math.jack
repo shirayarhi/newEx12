@@ -80,12 +80,12 @@ class Math {
       if (absY > absX) {
         return 0;
       }
-      let q = Math.divide(absX, 2 * absY);
+      let q = Math.divide(absX, absY + absY);
       if ((absX - (2 * q * absY)) < absY) {
-        let res = 2 * q;
+        let res = q + q;
       }
       else {
-        let res = (2 * q) + 1;
+        let res = (q + q) + 1;
       }
       if (((x > 0) & (y > 0)) | ((x < 0) & (y < 0))) {
         return res;
