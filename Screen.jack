@@ -15,17 +15,54 @@
  */
 class Screen {
 
+    static boolean curColor;
+    static Array screen;
+    static Array powOfTow;
+
+
     /** Initializes the Screen. */
     function void init() {
+      let screen = 16384;
+      let powOfTow = Array.new(16);
+      let powOfTow[0] = 1;
+      let powOfTow[1] = 2;
+      let powOfTow[2] = 4;
+      let powOfTow[3] = 8;
+      let powOfTow[4] = 16;
+      let powOfTow[5] = 32;
+      let powOfTow[6] = 64; 
+      let powOfTow[7] = 128;
+      let powOfTow[8] = 256;
+      let powOfTow[9] = 512;
+      let powOfTow[10] = 1024;
+      let powOfTow[11] = 2048;
+      let powOfTow[12] = 4096;
+      let powOfTow[13] = 8192;
+      let powOfTow[14] = 16384;
+      let powOfTow[15] = 16384*2;  
+      let curColor = true;               
+      return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
+      var int rows, cols, bitInd, screenSize;
+      let rows = 256;
+      let cols = 32;
+      let screenSize = rows * cols;
+      let bitInd = 0;
+      while (bitInd < screenSize) {
+        let screen[bitInd] = 0;
+        let bitInd = bitInd + 1; // maybe not like that?
+      }
+      return;  
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+      let curColor = b;
+      return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
@@ -35,6 +72,16 @@ class Screen {
 		// division, using exactly one basic math/logical operation.
 		// In addition, calculating 16384 + y * 32 + x/16 should not use
 		// division or multiplication.
+      var int value, address, ind;
+      let address = Screen.calculateAdrs(x, y);
+      let ind = powOfTow[x & 15];
+      if (curColor){
+        let screen[address] = screen[address] | ind; 
+      }
+      else {
+        let screen[address] = screen[address] & ~(ind);      
+        }
+      return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
@@ -44,14 +91,146 @@ class Screen {
 		// Also, the case where y1 == y2 can be implemented efficiently by
 		// trying to draw as many pixels as possible in a single assignment,
 		// similarly to Fill in project 4.
+      var int a, b, diff, dx, dy, temp;
+      var boolean dxNeg, dyNeg;
+      if (y1 = y2){
+        do Screen.drawHorizontal(Math.min(x1,x2), Math.max(x1,x2), y1);
+        return;
+      }
+      if (x1 = x2) {
+        let temp = y1;
+        let y1 = Math.min(y1, y2);
+        let y2 = Math.max(temp, y2);
+      }
+      let a = 0;
+      let b = 0;
+      let diff = 0;
+      let dx = x2 - x1;
+      let dy = y2 - y1;
+      if (dy < 0) {
+        if (dx < 0){
+          let x1 = Math.min(x1, x2);
+          let y1 = Math.min(y1, y2);
+          let dx = Math.abs(dx);
+          let dy = Math.abs(dy);  
+        }
+        else {
+          let dyNeg = true;
+          let dy = Math.abs(dy);
+        }
+      }
+      if (dx < 0 ){
+        let dxNeg = true;
+        let dx = Math.abs(dx);
+      }
+      while ((~(a > dx)) & (~(b > dy))) {
+        do Screen.drawPixel(x1 + a, y1 + b);
+        if (diff < 0) {
+          if (dxNeg){
+            let a = a - 1;
+          }
+           else {
+            let a = a + 1;
+           }
+          let diff = diff + dy;
+        }
+        else {
+          if (dyNeg){
+            let b = b - 1;
+          }
+           else {
+            let b = b + 1; 
+           }         
+            let diff = diff - dx;
+        }
+      }
+      return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+      var int y;
+      let y = y1;
+      while (~(y = y2)) {
+        do Screen.drawHorizontal(x1, x2, y);
+        let y = y + 1;
+      }
+      return;
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
+      var int dy, sqrtX, squaredDy, squaredR, pointAX, pointAY, pointBX, pointBY;
+      let dy = -r;
+      let squaredR = r * r;
+      while ((dy < r) | (dy = r)) {
+        let squaredDy = dy * dy;
+        let sqrtX = Math.sqrt(squaredR - squaredDy);
+        let pointAX = x - sqrtX;
+        let pointAY =  y + dy; 
+        let pointBX = x + sqrtX;
+        let pointBY = y + dy;
+        do Screen.drawLine(pointAX, pointAY ,pointBX, pointBY);
+        let dy = dy + 1;
+      }
+      return;
     }
-}
+
+    function void drawHorizontal(int x1, int x2, int y) {
+      var int cur, reg1, reg2, toFill, ind1, ind2;
+      if(x1 = x2){
+        do Screen.drawPixel(x1, y);
+        return;
+      }
+      let reg1 = Screen.calculateAdrs(x1, y);
+      let reg2 = Screen.calculateAdrs(x2, y);
+      let ind1 = powOfTow[x1 & 15];
+      let ind1 = ~(ind1 -1);
+      let ind2 = powOfTow[x2 & 15];
+      let ind2 = ind2 | (ind2 -1);
+      if (reg1 = reg2){
+        let ind1 = (ind1 & ind2);
+        if(curColor){
+          let screen[reg1] = (screen[reg1] | ind1);
+        } else {
+          let screen[reg1] = (screen[reg1] & ~(ind1));
+        }
+      }
+        if(curColor){
+        let screen[reg1] = (screen[reg1] | ind1);
+        let screen[reg2] = screen[reg2] | ind2;
+        }
+        else{
+          let screen[reg1] = (screen[reg1] & ~ind1);
+          let screen[reg2] = screen[reg2] & ~ind2;
+        }
+        let toFill = reg1 + 1;
+        while (toFill < reg2) {
+          if(curColor){
+          let screen[toFill] = -1;
+          } else {
+          let screen[toFill] = 0;
+          }
+          let toFill = toFill+1;
+        }
+      return;
+    }
+
+    function int calculateAdrs(int x, int y){
+      var int mult, div, shiftCount;
+      let shiftCount = 1;
+      let mult = y;
+      let div = x;
+      while (shiftCount < 6){
+        let mult = ^(mult);
+        let shiftCount = shiftCount + 1;
+      }
+      let shiftCount = 0;
+      while (shiftCount < 4) {
+        let div = #(div);
+        let shiftCount = shiftCount + 1;
+      }
+      return mult + div;
+    }
+    }

@@ -12,13 +12,32 @@
  * Note: Jack compilers implement multiplication and division using OS method calls.
  */
 class Math {
+  
+  static Array powersOfTwo;
 
     /** Initializes the library. */
     function void init() {
+      var int i, val;
+      let powersOfTwo = Array.new(16);
+      let i = 0;
+      let val = 1;
+      while (i < 16) {
+        let powersOfTwo[i] = val;
+        let i = i + 1;
+        let val = val + val;
+      }
+      return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+      if (x = 0) {
+        return 0;
+      }
+      if (x < 0) {
+        let x = -x;
+      }
+      return x;
     }
 
     /** Returns the product of x and y. 
@@ -27,6 +46,23 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+      var int sum, absX, absY, shiftedX, i;
+      let absX = Math.abs(x);
+      let absY = Math.abs(y);
+      let sum = 0;
+      let i = 0;
+      let shiftedX = absX;
+      while (i < 16) {
+        if (Math.bit(absY,i)) {
+          let sum = sum + shiftedX;
+        }
+        let shiftedX = shiftedX + shiftedX; 
+        let i = i + 1;
+      }
+      if (((x > 0) & (y > 0)) | ((x < 0) & (y < 0))) {
+        return sum;
+      }
+      return -sum;
     }
 
     /** Returns the integer part of x/y.
@@ -38,19 +74,66 @@ class Math {
 		// This should be implemented without using multiplication.
 		// Hint: updating the value of 2*q*y in the "if" statement requires
 		// at most a single addition operator at every recursion step.
+      var int absX, absY, res, q;
+      let absX = Math.abs(x);
+      let absY = Math.abs(y);
+      if (absY > absX) {
+        return 0;
+      }
+      let q = Math.divide(absX, 2 * absY);
+      if ((absX - (2 * q * absY)) < absY) {
+        let res = 2 * q;
+      }
+      else {
+        let res = (2 * q) + 1;
+      }
+      if (((x > 0) & (y > 0)) | ((x < 0) & (y < 0))) {
+        return res;
+      }
+      return (-res);
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
 		// This should be implemented without using division, but
 		// multiplication is allowed.
+      var int y, j;
+      var int exp;
+      var int sqExp;
+      if (x = 0 | x = 1) {
+        return x;
+      }
+      let y = 0;
+      let j = 7;
+      while (~(j < 0)) {
+        let exp = (powersOfTwo[j] + y);
+        let sqExp = exp * exp;
+        if (((sqExp < x) | (sqExp = x)) & (sqExp > 0)) {
+          let y = exp;
+        }
+        let j = j - 1;
+      }
+      return y;
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+      if (a > b) {
+        return a;
+      }
+      return b;
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+      if (a > b) {
+        return b;
+      }
+      return a;
+    }
+    
+    // Returns true if the i-th bit of x is 1, false otherwise 
+    function boolean bit(int x, int i) {
+      return (~((x & powersOfTwo[i]) = 0));
     }
 }
