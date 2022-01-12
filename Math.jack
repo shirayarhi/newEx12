@@ -74,14 +74,20 @@ class Math {
 		// This should be implemented without using multiplication.
 		// Hint: updating the value of 2*q*y in the "if" statement requires
 		// at most a single addition operator at every recursion step.
-      var int absX, absY, res, q;
+      var int absX, absY, res, q, i, prod;
       let absX = Math.abs(x);
       let absY = Math.abs(y);
+      let prod = 0;
+      let i = 0;
       if (absY > absX) {
         return 0;
       }
       let q = Math.divide(absX, absY + absY);
-      if ((absX - (2 * q * absY)) < absY) {
+      while (i < absY) {
+        let prod = prod + q + q;
+        let i = i + 1;
+      }
+      if ((absX - prod) < absY) {
         let res = q + q;
       }
       else {

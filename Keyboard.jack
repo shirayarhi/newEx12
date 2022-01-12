@@ -67,25 +67,21 @@ class Keyboard {
      */
 
       function String readLine(String message) {
-      var String str;
-      var char c;
-      let str = String.new(64);
+      var char cur;
+      var String myStr;
+      let myStr = String.new(64);
       do Output.printString(message);
-
-      while (true){
-        let c = Keyboard.readChar();
-        if(c = String.newLine()){
-            do Output.printChar(str);
-            return str;
-        }
-        if(c = String.backSpace()){
-          do str.eraseLastChar();
+      let cur = Keyboard.readChar();
+      while (~(cur = 128)){
+        if(cur = 129){
+          do myStr.eraseLastChar();
         } 
         else {
-          do str.appendChar(c);
+          do myStr.appendChar(cur);
         }
+        let cur = Keyboard.readChar();
       }
-      return str;
+      return myStr;
     }
 
     /**								
